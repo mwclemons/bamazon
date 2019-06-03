@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var cTable = require('console.table');
 
 // create the connection information for the sql database
 var connection = mysql.createConnection({
@@ -53,18 +54,18 @@ function showManagerList() {
 function viewProducts() {
     connection.query("SELECT item_id, product_name, price, stock_quantity FROM products", function(err, res) {
       if (err) throw err;
-      console.table(res);
+      var showTable = cTable.getTable(res);
+      console.log(showTable);
       showManagerList();
-  
     });
 }
 
 function viewLowInventory() {
     connection.query("SELECT item_id, product_name, price, stock_quantity FROM products WHERE stock_quantity < 5", function(err, res) {
       if (err) throw err;
-      console.table(res);
+      var showTable = cTable.getTable(res);
+      console.log(showTable);
       showManagerList();
-  
     });
 }
 
@@ -150,7 +151,7 @@ function promptAddProduct() {
             }
         }
     ]).then(function(answer) {
-        connection.query("INSERT INTO products (product_name,department_name,price,stock_quantity) VALUES ('"+answer.newitem_name+"','"+answer.newitem_department+"',"+answer.newitem_price+","+answer.newitem_quantity+")", function(err, res) {
+        connection.query("INSERT INTO products (product_name,department_name,price,stock_quantity,product_sales) VALUES ('"+answer.newitem_name+"','"+answer.newitem_department+"',"+answer.newitem_price+","+answer.newitem_quantity+","+0+")", function(err, res) {
             if (err) throw err;
             showManagerList();
         });

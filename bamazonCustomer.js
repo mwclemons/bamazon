@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var cTable = require('console.table');
 
 // create the connection information for the sql database
 var connection = mysql.createConnection({
@@ -23,11 +24,12 @@ connection.connect(function(err) {
 });
 
 function displayProducts(callback) {
+    
     connection.query("SELECT item_id, product_name, price FROM products", function(err, res) {
-      if (err) throw err;
-      console.table(res);
-      callback();
-  
+        if (err) throw err;
+        var showTable = cTable.getTable(res);
+        console.log(showTable);
+        callback();
     });
 }
 
@@ -59,7 +61,6 @@ function askQuestions() {
         }
     ]).then(function(answer) {
       
-        // console.log(answer.itemNumber, answer.amount)
         checkQuantity(answer.itemNumber, answer.amount);
       
     });
